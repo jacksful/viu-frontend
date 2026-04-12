@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIU Website — Developer Guide</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: #1a1c4f; background: #f8fafc; line-height: 1.7; }
+    .header { background: linear-gradient(135deg, #2a2d7c 0%, #1a1c4f 100%); color: white; padding: 48px 24px; text-align: center; }
+    .header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
+    .header p { color: rgba(255,255,255,0.7); font-size: 16px; }
+    .badge { display: inline-block; background: rgba(245,127,32,0.15); color: #f57f20; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 100px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    .container { max-width: 880px; margin: 0 auto; padding: 40px 24px; }
+    .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 32px; margin-bottom: 24px; }
+    .card h2 { font-size: 22px; font-weight: 700; color: #2a2d7c; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #f57f20; display: inline-block; }
+    .card h3 { font-size: 17px; font-weight: 700; color: #2a2d7c; margin: 20px 0 8px; }
+    .card p, .card li { color: #4a5565; font-size: 15px; }
+    .card ul, .card ol { padding-left: 20px; margin: 8px 0; }
+    .card li { margin-bottom: 6px; }
+    code { background: #f1f5f9; color: #dc2626; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; padding: 2px 6px; border-radius: 4px; }
+    pre { background: #1e293b; color: #e2e8f0; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 12px 0; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.8; }
+    pre code { background: none; color: inherit; padding: 0; }
+    .comment { color: #64748b; }
+    .string { color: #a5d6ff; }
+    .keyword { color: #ff7b72; }
+    .table-wrap { overflow-x: auto; margin: 12px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background: #f8fafc; text-align: left; padding: 10px 14px; font-weight: 700; color: #2a2d7c; border-bottom: 2px solid #e5e7eb; }
+    td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #4a5565; }
+    .alert { background: #fffbeb; border-left: 4px solid #f57f20; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+    .alert-blue { background: #eff6ff; border-left-color: #2a2d7c; }
+    .alert strong { color: #1a1c4f; }
+    .step-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #2a2d7c; color: white; border-radius: 50%; font-size: 13px; font-weight: 700; margin-right: 8px; flex-shrink: 0; }
+    .step { display: flex; align-items: flex-start; margin-bottom: 16px; }
+    .step-content { flex: 1; }
+    .toc { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px 32px; margin-bottom: 32px; }
+    .toc h3 { font-size: 16px; font-weight: 700; color: #2a2d7c; margin-bottom: 12px; }
+    .toc a { color: #2a2d7c; text-decoration: none; font-size: 14px; display: block; padding: 4px 0; }
+    .toc a:hover { color: #f57f20; }
+    .footer { text-align: center; padding: 32px 24px; color: #99a1af; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>VIU Website — Developer Guide</h1>
+  <p>Next.js 16 + Tailwind CSS + Sanity CMS — API Integration &amp; Deployment</p>
+</div>
+
+<div class="container">
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc">
+    <h3>Contents</h3>
+    <a href="#overview">1. Project Overview &amp; Tech Stack</a>
+    <a href="#structure">2. Folder Structure</a>
+    <a href="#setup">3. Getting Started (Setup)</a>
+    <a href="#api">4. Laravel API Integration (Forms)</a>
+    <a href="#content">5. Editing Content &amp; Images</a>
+    <a href="#sanity">6. Sanity CMS Setup (Optional)</a>
+    <a href="#pages">7. Adding New Pages</a>
+    <a href="#deploy">8. Deployment Guide</a>
+    <a href="#env">9. Environment Variables Reference</a>
+  </div>
+
+  <!-- 1. OVERVIEW -->
+  <div class="card" id="overview">
+    <span class="badge">Section 1</span>
+    <h2>Project Overview</h2>
+    <p>VIU is a dynamic, responsive landing page for a real estate territory ownership platform. It's built with a modern stack designed for performance and easy content management.</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr>
+        <tr><td>Framework</td><td>Next.js 16 (App Router)</td><td>SSR, routing, API routes</td></tr>
+        <tr><td>Styling</td><td>Tailwind CSS 4</td><td>Utility-first CSS</td></tr>
+        <tr><td>Language</td><td>TypeScript</td><td>Type safety</td></tr>
+        <tr><td>Icons</td><td>Lucide React</td><td>SVG icon library</td></tr>
+        <tr><td>Animations</td><td>CSS + Custom Hooks</td><td>Scroll-triggered animations</td></tr>
+        <tr><td>CMS</td><td>Sanity v3 (optional)</td><td>Headless content management</td></tr>
+        <tr><td>Forms</td><td>Next.js API Routes</td><td>Proxy to Laravel API</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2. STRUCTURE -->
+  <div class="card" id="structure">
+    <span class="badge">Section 2</span>
+    <h2>Folder Structure</h2>
+    <pre><code>VIU/
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx            <span class="comment"># Root layout (nav + footer)</span>
+│   │   ├── page.tsx              <span class="comment"># Homepage</span>
+│   │   ├── globals.css           <span class="comment"># Global styles + design tokens</span>
+│   │   ├── api/
+│   │   │   ├── zip-check/route.ts  <span class="comment"># ZIP availability API proxy</span>
+│   │   │   └── contact/route.ts    <span class="comment"># Contact form API proxy</span>
+│   │   ├── [slug]/page.tsx       <span class="comment"># Dynamic pages (future)</span>
+│   │   └── studio/               <span class="comment"># Sanity CMS admin panel</span>
+│   │
+│   ├── components/
+│   │   ├── layout/               <span class="comment"># Navbar, Footer</span>
+│   │   ├── sections/             <span class="comment"># Page sections (Hero, Stats, etc.)</span>
+│   │   ├── ui/                   <span class="comment"># Reusable components (Button, Badge)</span>
+│   │   └── forms/                <span class="comment"># ZipCheckModal, ContactForm</span>
+│   │
+│   ├── hooks/                    <span class="comment"># Custom React hooks</span>
+│   └── lib/sanity/               <span class="comment"># Sanity client + queries</span>
+│
+├── public/images/                <span class="comment"># Static images (hero, sections, logos)</span>
+├── sanity/schemas/               <span class="comment"># CMS content schemas</span>
+├── .env.local                    <span class="comment"># API keys &amp; config (DO NOT COMMIT)</span>
+└── package.json</code></pre>
+  </div>
+
+  <!-- 3. SETUP -->
+  <div class="card" id="setup">
+    <span class="badge">Section 3</span>
+    <h2>Getting Started</h2>
+    <p>Prerequisites: <strong>Node.js 18+</strong> and <strong>npm</strong></p>
+
+    <div class="step">
+      <span class="step-num">1</span>
+      <div class="step-content">
+        <strong>Install dependencies</strong>
+        <pre><code>cd VIU
+npm install</code></pre>
+        <p>This recreates the <code>node_modules/</code> folder (~900MB). This is normal.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span>
+      <div class="step-content">
+        <strong>Configure environment variables</strong>
+        <pre><code>cp .env.local.example .env.local
+<span class="comment"># Or edit .env.local directly</span></code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span>
+      <div class="step-content">
+        <strong>Run the development server</strong>
+        <pre><code>npm run dev
+<span class="comment"># Opens at http://localhost:3000</span></code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">4</span>
+      <div class="step-content">
+        <strong>Build for production</strong>
+        <pre><code>npm run build
+npm start</code></pre>
+      </div>
+    </div>
+
+    <div class="alert">
+      <strong>Note:</strong> Do NOT include <code>node_modules/</code> or <code>.next/</code> when sending files. They are auto-generated. The <code>.gitignore</code> already excludes them.
+    </div>
+  </div>
+
+  <!-- 4. LARAVEL API INTEGRATION -->
+  <div class="card" id="api">
+    <span class="badge">Section 4 — Important</span>
+    <h2>Laravel API Integration</h2>
+    <p>The website has <strong>2 forms</strong> that send data to your Laravel dashboard via API proxy routes. Here's how they work:</p>
+
+    <h3>How It Works</h3>
+    <pre><code>User fills form on Next.js site
+        ↓
+POST request to Next.js API route (/api/zip-check or /api/contact)
+        ↓
+Next.js forwards request to your Laravel API
+        ↓
+Laravel processes data → stores in dashboard
+        ↓
+Response sent back to user</code></pre>
+
+    <h3>Form 1: ZIP Code Availability Check</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Property</th><th>Value</th></tr>
+        <tr><td>Next.js Route</td><td><code>/api/zip-check</code></td></tr>
+        <tr><td>File</td><td><code>src/app/api/zip-check/route.ts</code></td></tr>
+        <tr><td>Method</td><td>POST</td></tr>
+        <tr><td>Request Body</td><td><code>{ "zipCode": "90210" }</code></td></tr>
+        <tr><td>Expected Response</td><td><code>{ "available": true, "message": "..." }</code></td></tr>
+      </table>
+    </div>
+
+    <p><strong>Your Laravel endpoint should:</strong></p>
+    <ul>
+      <li>Accept POST with JSON body <code>{ "zipCode": "90210" }</code></li>
+      <li>Check if the ZIP is available in your database</li>
+      <li>Return <code>{ "available": true/false, "message": "..." }</code></li>
+    </ul>
+
+    <h3>Form 2: Lead Capture / Territory Claim</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Property</th><th>Value</th></tr>
+        <tr><td>Next.js Route</td><td><code>/api/contact</code></td></tr>
+        <tr><td>File</td><td><code>src/app/api/contact/route.ts</code></td></tr>
+        <tr><td>Method</td><td>POST</td></tr>
+        <tr><td>Request Body</td><td><code>{ "name", "email", "phone", "company", "zipCode", "source" }</code></td></tr>
+        <tr><td>Expected Response</td><td><code>{ "success": true, "message": "..." }</code></td></tr>
+      </table>
+    </div>
+
+    <p><strong>Full request body example:</strong></p>
+    <pre><code>{
+  <span class="string">"name"</span>: <span class="string">"John Smith"</span>,
+  <span class="string">"email"</span>: <span class="string">"john@example.com"</span>,
+  <span class="string">"phone"</span>: <span class="string">"555-0123"</span>,
+  <span class="string">"company"</span>: <span class="string">"RE/MAX Elite"</span>,
+  <span class="string">"zipCode"</span>: <span class="string">"90210"</span>,
+  <span class="string">"source"</span>: <span class="string">"territory-claim"</span>
+}</code></pre>
+
+    <h3>Laravel Endpoint Examples</h3>
+    <pre><code><span class="comment">// routes/api.php</span>
+
+Route::post(<span class="string">'/zip-check'</span>, <span class="keyword">function</span> (Request $request) {
+    $zipCode = $request->input(<span class="string">'zipCode'</span>);
+
+    $exists = Territory::where(<span class="string">'zip_code'</span>, $zipCode)
+                       ->where(<span class="string">'active'</span>, <span class="keyword">true</span>)
+                       ->exists();
+
+    <span class="keyword">return</span> response()->json([
+        <span class="string">'available'</span> => !$exists,
+        <span class="string">'zipCode'</span>  => $zipCode,
+        <span class="string">'message'</span>  => $exists
+            ? <span class="string">"ZIP {$zipCode} is currently taken."</span>
+            : <span class="string">"ZIP {$zipCode} is available!"</span>,
+    ]);
+});
+
+Route::post(<span class="string">'/contact'</span>, <span class="keyword">function</span> (Request $request) {
+    $validated = $request->validate([
+        <span class="string">'name'</span>    => <span class="string">'required|string'</span>,
+        <span class="string">'email'</span>   => <span class="string">'required|email'</span>,
+        <span class="string">'phone'</span>   => <span class="string">'nullable|string'</span>,
+        <span class="string">'company'</span> => <span class="string">'nullable|string'</span>,
+        <span class="string">'zipCode'</span> => <span class="string">'nullable|string|size:5'</span>,
+        <span class="string">'source'</span>  => <span class="string">'nullable|string'</span>,
+    ]);
+
+    Lead::create($validated);
+
+    <span class="keyword">return</span> response()->json([
+        <span class="string">'success'</span> => <span class="keyword">true</span>,
+        <span class="string">'message'</span> => <span class="string">'Territory specialist will contact you within 24 hours.'</span>,
+    ]);
+});</code></pre>
+
+    <h3>Connecting Your Laravel API</h3>
+    <p>Edit <code>.env.local</code> in the VIU project root:</p>
+    <pre><code><span class="comment"># Your Laravel API base URLs</span>
+ZIP_CHECK_API_URL=<span class="string">https://fullviu.com/api/zip-check</span>
+CONTACT_API_URL=<span class="string">https://fullviu.com/api/contact</span>
+
+<span class="comment"># If your Laravel API uses Bearer token auth</span>
+API_KEY=<span class="string">your-laravel-api-key-here</span></code></pre>
+
+    <div class="alert-blue alert">
+      <strong>CORS:</strong> Your Laravel app needs to allow requests from the Next.js domain. Add it to <code>config/cors.php</code> → <code>allowed_origins</code>.
+    </div>
+  </div>
+
+  <!-- 5. EDITING CONTENT -->
+  <div class="card" id="content">
+    <span class="badge">Section 5</span>
+    <h2>Editing Content &amp; Images</h2>
+
+    <h3>Changing Text</h3>
+    <p>Each page section is a separate file in <code>src/components/sections/</code>:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Section</th><th>File</th></tr>
+        <tr><td>Hero (headline, description)</td><td><code>sections/HeroSection.tsx</code></td></tr>
+        <tr><td>Stats Bar (90, 100%, 24/7)</td><td><code>sections/StatsBar.tsx</code></td></tr>
+        <tr><td>"Be First. Be Known."</td><td><code>sections/StrategicWindowSection.tsx</code></td></tr>
+        <tr><td>"One ZIP. One Agent."</td><td><code>sections/TerritorySection.tsx</code></td></tr>
+        <tr><td>"Built for Long-Term"</td><td><code>sections/BrandAuthoritySection.tsx</code></td></tr>
+        <tr><td>Pricing ($199/mo)</td><td><code>sections/PricingSection.tsx</code></td></tr>
+        <tr><td>FAQ Accordion</td><td><code>sections/FaqSection.tsx</code></td></tr>
+        <tr><td>"Still Have Questions?"</td><td><code>sections/CtaBanner.tsx</code></td></tr>
+        <tr><td>Navigation Links</td><td><code>layout/Navbar.tsx</code></td></tr>
+        <tr><td>Footer</td><td><code>layout/Footer.tsx</code></td></tr>
+      </table>
+    </div>
+    <p>Open the file, find the text string, and change it. The dev server hot-reloads instantly.</p>
+
+    <h3>Changing Images</h3>
+    <p>Replace files in <code>public/images/</code>:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Image</th><th>File</th><th>Recommended Size</th></tr>
+        <tr><td>Hero background</td><td><code>hero-bg.jpg</code></td><td>1920x1080px</td></tr>
+        <tr><td>Strategic Window</td><td><code>section-1.jpg</code></td><td>1200x1200px</td></tr>
+        <tr><td>Territory Lock</td><td><code>section-2.jpg</code></td><td>1200x1200px</td></tr>
+        <tr><td>Brand Authority</td><td><code>section-3.jpg</code></td><td>1200x1200px</td></tr>
+        <tr><td>Pricing (lock)</td><td><code>section-4.jpg</code></td><td>1200x1200px</td></tr>
+        <tr><td>Logo (white)</td><td><code>logo-white.svg</code></td><td>SVG preferred</td></tr>
+        <tr><td>Logo (dark)</td><td><code>logo-dark.svg</code></td><td>SVG preferred</td></tr>
+      </table>
+    </div>
+    <p>Keep the same filename — no code changes needed.</p>
+
+    <h3>Changing Colors</h3>
+    <p>Design tokens are in <code>src/app/globals.css</code>:</p>
+    <pre><code>:root {
+  --color-primary: <span class="string">#2a2d7c</span>;        <span class="comment">/* Navy blue */</span>
+  --color-accent: <span class="string">#f57f20</span>;         <span class="comment">/* Orange */</span>
+  --color-primary-dark: <span class="string">#1a1c4f</span>;   <span class="comment">/* Footer dark */</span>
+  --color-text-body: <span class="string">#6a7282</span>;      <span class="comment">/* Body text */</span>
+}</code></pre>
+
+    <h3>Changing Navigation Links</h3>
+    <p>Edit the array in <code>src/components/layout/Navbar.tsx</code>:</p>
+    <pre><code><span class="keyword">const</span> navLinks = [
+  { label: <span class="string">"The Advantage"</span>, href: <span class="string">"#advantage"</span> },
+  { label: <span class="string">"Territory"</span>, href: <span class="string">"#territory"</span> },
+  { label: <span class="string">"Exclusivity"</span>, href: <span class="string">"#exclusivity"</span> },
+  { label: <span class="string">"Pricing"</span>, href: <span class="string">"#pricing"</span> },
+];</code></pre>
+  </div>
+
+  <!-- 6. SANITY CMS -->
+  <div class="card" id="sanity">
+    <span class="badge">Section 6 — Optional</span>
+    <h2>Sanity CMS Setup</h2>
+    <p>Sanity lets non-developers edit content via a visual dashboard at <code>/studio</code>. This is optional — you can edit files directly instead.</p>
+
+    <div class="step">
+      <span class="step-num">1</span>
+      <div class="step-content">
+        <strong>Create a Sanity project</strong>
+        <pre><code>npx sanity init --project-id <span class="string">&lt;generated&gt;</span></code></pre>
+        <p>Or create one at <a href="https://sanity.io/manage" target="_blank">sanity.io/manage</a></p>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span>
+      <div class="step-content">
+        <strong>Add credentials to <code>.env.local</code></strong>
+        <pre><code>NEXT_PUBLIC_SANITY_PROJECT_ID=<span class="string">your-project-id</span>
+NEXT_PUBLIC_SANITY_DATASET=<span class="string">production</span></code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span>
+      <div class="step-content">
+        <strong>Access the CMS</strong>
+        <p>Go to <code>http://localhost:3000/studio</code> — the content editor is embedded in the site.</p>
+      </div>
+    </div>
+
+    <p>Schemas are pre-configured in <code>sanity/schemas/</code> for all page sections.</p>
+  </div>
+
+  <!-- 7. ADDING PAGES -->
+  <div class="card" id="pages">
+    <span class="badge">Section 7</span>
+    <h2>Adding New Pages</h2>
+    <p>The project supports dynamic pages via <code>src/app/[slug]/page.tsx</code>.</p>
+
+    <h3>Option A: Create a static page</h3>
+    <p>Add a new file at <code>src/app/about/page.tsx</code>:</p>
+    <pre><code><span class="keyword">export default function</span> AboutPage() {
+  <span class="keyword">return</span> (
+    &lt;div className=<span class="string">"mx-auto max-w-[1440px] px-5 py-20"</span>&gt;
+      &lt;h1&gt;About VIU&lt;/h1&gt;
+      &lt;p&gt;Your content here...&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+    <p>It's instantly available at <code>/about</code>.</p>
+
+    <h3>Option B: Create via Sanity CMS</h3>
+    <p>Create a new "Page" document in Sanity Studio, add sections, set the slug — it auto-renders at <code>/your-slug</code>.</p>
+  </div>
+
+  <!-- 8. DEPLOYMENT -->
+  <div class="card" id="deploy">
+    <span class="badge">Section 8</span>
+    <h2>Deployment Guide</h2>
+
+    <h3>Option A: Vercel (Recommended — Free)</h3>
+    <div class="step">
+      <span class="step-num">1</span>
+      <div class="step-content">Push code to GitHub/GitLab</div>
+    </div>
+    <div class="step">
+      <span class="step-num">2</span>
+      <div class="step-content">Go to <a href="https://vercel.com" target="_blank">vercel.com</a> → Import project</div>
+    </div>
+    <div class="step">
+      <span class="step-num">3</span>
+      <div class="step-content">Add environment variables in Vercel dashboard (same as <code>.env.local</code>)</div>
+    </div>
+    <div class="step">
+      <span class="step-num">4</span>
+      <div class="step-content">Deploy — Vercel auto-detects Next.js. Zero config needed.</div>
+    </div>
+    <div class="step">
+      <span class="step-num">5</span>
+      <div class="step-content">Add custom domain (e.g., <code>fullviu.com</code>) in Vercel → Settings → Domains</div>
+    </div>
+
+    <h3>Option B: Hostinger VPS / Any Node.js Server</h3>
+    <pre><code><span class="comment"># On the server:</span>
+git clone your-repo
+cd VIU
+npm install
+npm run build
+
+<span class="comment"># Start production server (use PM2 for persistence)</span>
+npm install -g pm2
+pm2 start npm --name <span class="string">"viu"</span> -- start
+pm2 save</code></pre>
+
+    <div class="alert">
+      <strong>Important:</strong> Set environment variables on the server before building. Either create <code>.env.local</code> on the server or set them via your hosting panel.
+    </div>
+
+    <h3>Option C: Static Export (Shared Hosting)</h3>
+    <p>Add to <code>next.config.ts</code>:</p>
+    <pre><code><span class="keyword">const</span> nextConfig = {
+  output: <span class="string">'export'</span>,
+};</code></pre>
+    <pre><code>npm run build
+<span class="comment"># Upload the `out/` folder to Hostinger shared hosting</span></code></pre>
+    <div class="alert">
+      <strong>Note:</strong> Static export disables API routes. Forms would need to call your Laravel API directly from the client instead of proxying through Next.js.
+    </div>
+  </div>
+
+  <!-- 9. ENV REFERENCE -->
+  <div class="card" id="env">
+    <span class="badge">Section 9</span>
+    <h2>Environment Variables</h2>
+    <p>All variables go in <code>.env.local</code> (never commit this file):</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Variable</th><th>Required</th><th>Description</th></tr>
+        <tr><td><code>ZIP_CHECK_API_URL</code></td><td>Yes</td><td>Your Laravel ZIP check endpoint URL</td></tr>
+        <tr><td><code>CONTACT_API_URL</code></td><td>Yes</td><td>Your Laravel contact/lead endpoint URL</td></tr>
+        <tr><td><code>API_KEY</code></td><td>If needed</td><td>Bearer token for Laravel API auth</td></tr>
+        <tr><td><code>NEXT_PUBLIC_SANITY_PROJECT_ID</code></td><td>No</td><td>Sanity project ID (if using CMS)</td></tr>
+        <tr><td><code>NEXT_PUBLIC_SANITY_DATASET</code></td><td>No</td><td>Sanity dataset name (default: production)</td></tr>
+      </table>
+    </div>
+
+    <p><strong>Example <code>.env.local</code>:</strong></p>
+    <pre><code><span class="comment"># Laravel API</span>
+ZIP_CHECK_API_URL=<span class="string">https://fullviu.com/api/zip-check</span>
+CONTACT_API_URL=<span class="string">https://fullviu.com/api/contact</span>
+API_KEY=<span class="string">your-secret-api-key</span>
+
+<span class="comment"># Sanity CMS (optional)</span>
+NEXT_PUBLIC_SANITY_PROJECT_ID=<span class="string">abc123</span>
+NEXT_PUBLIC_SANITY_DATASET=<span class="string">production</span></code></pre>
+  </div>
+
+</div>
+
+<div class="footer">
+  VIU Developer Guide — Generated April 2026<br>
+  Next.js 16 + Tailwind CSS 4 + TypeScript + Sanity CMS
+</div>
+
+</body>
+</html>

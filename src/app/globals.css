@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #2a2d7c;
+  --color-primary-dark: #1a1c4f;
+  --color-accent: #f57f20;
+  --color-text-body: #6a7282;
+  --color-text-muted: #868c96;
+  --color-text-light: #99a1af;
+  --color-bg-light: #f8fafc;
+  --color-bg-lighter: #f9fafb;
+  --color-border: #f3f4f6;
+  --color-accent-bg: rgba(245, 127, 32, 0.1);
+  --color-accent-warm: #f9eee5;
+}
+
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-accent: var(--color-accent);
+  --color-text-body: var(--color-text-body);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-light: var(--color-text-light);
+  --color-bg-light: var(--color-bg-light);
+  --color-bg-lighter: var(--color-bg-lighter);
+  --color-border: var(--color-border);
+  --color-accent-bg: var(--color-accent-bg);
+  --color-accent-warm: var(--color-accent-warm);
+  --font-sans: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--color-text-body);
+  background: #ffffff;
+  overflow-x: hidden;
+}
+
+/* Fluid typography */
+h1, .heading-xl {
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.06em;
+}
+
+h2, .heading-lg {
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+  line-height: 1.17;
+  letter-spacing: -0.03em;
+}
+
+/* Modal animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-fadeIn { animation: fadeIn 0.2s ease-out; }
+.animate-slideUp { animation: slideUp 0.3s ease-out; }
+
+/* Section reveal animations */
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes revealLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes revealRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes progressFill {
+  from { width: 0; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
