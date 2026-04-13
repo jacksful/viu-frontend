@@ -1,6 +1,6 @@
 /**
  * Client-side ZIP availability check against the Laravel API.
- * Configure `NEXT_PUBLIC_ZIP_API_BASE_URL` (e.g. http://mvp.test/api) for production.
+ * Configure `NEXT_PUBLIC_ZIP_API_BASE_URL` (e.g. https://portal.fullviu.com/api) for production.
  */
 
 export type ZipCodeDetails = {
@@ -22,7 +22,7 @@ export type ZipAvailabilityResponse = {
 function getZipApiBase(): string {
   return (
     process.env.NEXT_PUBLIC_ZIP_API_BASE_URL?.replace(/\/$/, "") ??
-    "http://mvp.test/api"
+    "https://portal.fullviu.com/api"
   );
 }
 
@@ -70,7 +70,9 @@ export async function checkZipAvailability(
   };
 }
 
-export function formatMonthlyPriceMain(monthlyPrice: string | undefined): string {
+export function formatMonthlyPriceMain(
+  monthlyPrice: string | undefined,
+): string {
   if (!monthlyPrice) return "199";
   const n = Number.parseFloat(monthlyPrice);
   if (Number.isNaN(n)) {
@@ -97,7 +99,9 @@ export type SubmitLeadResponse = {
   };
 };
 
-function formatLaravelError(body: Record<string, unknown> | null): string | null {
+function formatLaravelError(
+  body: Record<string, unknown> | null,
+): string | null {
   if (!body) return null;
   if (typeof body.message === "string" && body.message.trim()) {
     return body.message;
@@ -134,8 +138,7 @@ export async function submitLead(
   const body = data as Record<string, unknown> | null;
 
   if (!res.ok) {
-    const msg =
-      formatLaravelError(body) || `Request failed (${res.status})`;
+    const msg = formatLaravelError(body) || `Request failed (${res.status})`;
     throw new Error(msg);
   }
 
