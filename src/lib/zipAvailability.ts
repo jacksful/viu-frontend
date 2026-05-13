@@ -10,16 +10,18 @@ export type ZipCodeDetails = {
   state: string;
   label: string;
   monthly_price: string;
+  yearly_price?: string | null;
   leads_count: number;
 };
 
 export type ZipAvailabilityResponse = {
   available: boolean;
   message: string;
+  is_in_coverage_area: boolean;
   zipcode: ZipCodeDetails | null;
 };
 
-function getZipApiBase(): string {
+export function getZipApiBase(): string {
   return (
     process.env.NEXT_PUBLIC_ZIP_API_BASE_URL?.replace(/\/$/, "") ??
     "https://portal.fullviu.com/api"
@@ -63,9 +65,15 @@ export async function checkZipAvailability(
     throw new Error("Unexpected response from availability service.");
   }
 
+  const isInCoverage =
+    typeof body.is_in_coverage_area === "boolean"
+      ? body.is_in_coverage_area
+      : false;
+
   return {
     available: body.available,
     message: body.message,
+    is_in_coverage_area: isInCoverage,
     zipcode: (body.zipcode as ZipCodeDetails | null | undefined) ?? null,
   };
 }
@@ -79,6 +87,52 @@ export function formatMonthlyPriceMain(
     return monthlyPrice.replace(/[^\d.]/g, "") || "199";
   }
   return String(Math.round(n));
+}
+
+/** Rounded display amount for an API price string; empty if missing / not parseable. */
+export function formatPriceMainDisplay(price: string | undefined | null): string {
+  if (price == null || String(price).trim() === "") return "";
+  const raw = String(price);
+  const n = Number.parseFloat(raw);
+  if (Number.isNaN(n)) {
+    return raw.replace(/[^\d.]/g, "") || "";
+  }
+  return String(Math.round(n));
+}
+
+function monthlyPriceIsZeroOrAbsent(
+  monthlyPrice: string | undefined | null,
+): boolean {
+  if (monthlyPrice == null || String(monthlyPrice).trim() === "") return true;
+  const n = Number.parseFloat(String(monthlyPrice));
+  if (Number.isNaN(n)) return true;
+  return n === 0;
+}
+
+/** Prefer monthly pricing; when it is null or 0, show yearly (if present). */
+export function getZipPricingDisplay(zip: ZipCodeDetails | null | undefined): {
+  amount: string;
+  periodSuffix: string;
+} {
+  const monthly = zip?.monthly_price;
+  const yearly = zip?.yearly_price;
+
+  if (!monthlyPriceIsZeroOrAbsent(monthly)) {
+    return {
+      amount: formatMonthlyPriceMain(monthly),
+      periodSuffix: "/MO",
+    };
+  }
+
+  const yearlyAmount = formatPriceMainDisplay(yearly);
+  if (yearlyAmount) {
+    return { amount: yearlyAmount, periodSuffix: "/YR" };
+  }
+
+  return {
+    amount: formatMonthlyPriceMain(monthly),
+    periodSuffix: "/MO",
+  };
 }
 
 /** POST /leads — Laravel territory lead capture */

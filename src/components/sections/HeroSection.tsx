@@ -6,11 +6,13 @@ import {
   checkZipAvailability,
   type ZipAvailabilityResponse,
 } from "@/lib/zipAvailability";
+import type { CmsHeroSection } from "@/lib/cms";
+import { heroTitleLines } from "@/lib/cms";
 import { CheckCircle, Loader2, Shield } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-export default function HeroSection() {
+export default function HeroSection({ data }: { data: CmsHeroSection }) {
   const [zipCode, setZipCode] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [heroSubmitLoading, setHeroSubmitLoading] = useState(false);
@@ -19,6 +21,12 @@ export default function HeroSection() {
     useState<ZipAvailabilityResponse | null>(null);
   const [scrollY, setScrollY] = useState(0);
   const [mounted, setMounted] = useState(false);
+
+  const heroSrc =
+    data.image_url && data.image_url.length > 0
+      ? data.image_url
+      : "/images/hero-bg.jpg";
+  const titleLines = heroTitleLines(data.title);
 
   useEffect(() => {
     setMounted(true);
@@ -30,11 +38,6 @@ export default function HeroSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setHeroSubmitError("");
-
-    // if (zipCode.length !== 5) {
-    //   setHeroSubmitError("Please enter a 5-digit ZIP code.");
-    //   return;
-    // }
 
     setHeroSubmitLoading(true);
     try {
@@ -67,12 +70,13 @@ export default function HeroSection() {
             style={{ transform: `translateY(${scrollY * 0.3}px) scale(1.1)` }}
           >
             <Image
-              src="/images/hero-bg.jpg"
+              src={heroSrc}
               alt=""
               fill
               className="object-cover"
               priority
               quality={90}
+              sizes="100vw"
             />
           </div>
           <div
@@ -95,8 +99,11 @@ export default function HeroSection() {
                   : "opacity-0 translate-y-8"
               }`}
             >
-              <span className="block">OWN THE MARKET</span>
-              <span className="block">BEFORE THEY SELL</span>
+              {titleLines.map((line, li) => (
+                <span key={`${li}-${line}`} className="block">
+                  {line}
+                </span>
+              ))}
             </h1>
 
             <p
@@ -106,13 +113,12 @@ export default function HeroSection() {
                   : "opacity-0 translate-y-6"
               }`}
             >
-              Viu uses predictive modeling to place your brand in front of
-              homeowners up to 90 days before they decide to sell — securing
-              your position before search even begins.
+              {data.description}
             </p>
 
             {/* ZIP Code Form */}
             <form
+              id="hero-zip"
               onSubmit={handleSubmit}
               className={`flex flex-col gap-6 transition-all duration-1000 delay-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 mounted

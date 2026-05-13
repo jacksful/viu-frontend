@@ -1,17 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import { Loader2 } from "lucide-react";
 
-export default function ContactForm() {
+function normalizeZip(value: string) {
+  return value.replace(/\D/g, "").slice(0, 5);
+}
+
+export interface ContactFormProps {
+  /** Pre-fills ZIP code of interest (e.g. from zip check modal). */
+  initialZip?: string;
+  /** Override default `id="contact"` to avoid duplicate IDs when embedded. */
+  formId?: string;
+  className?: string;
+}
+
+export default function ContactForm({
+  initialZip = "",
+  formId = "contact",
+  className,
+}: ContactFormProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    zipCode: "",
+    zip_of_interest: normalizeZip(initialZip),
     message: "",
   });
+
+  useEffect(() => {
+    if (!initialZip) return;
+    const z = normalizeZip(initialZip);
+    setFormData((prev) =>
+      prev.zip_of_interest === z ? prev : { ...prev, zip_of_interest: z },
+    );
+  }, [initialZip]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{
     success?: boolean;
@@ -20,7 +44,7 @@ export default function ContactForm() {
   } | null>(null);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -36,15 +60,37 @@ export default function ContactForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      const data = await res.json();
+      const data = (await res.json()) as {
+        success?: boolean;
+        message?: string;
+        error?: string;
+      };
 
-      if (!res.ok) {
-        setResult({ error: data.error });
+      if (!res.ok || data.success === false) {
+        setResult({
+          error:
+            typeof data.message === "string"
+              ? data.message
+              : typeof data.error === "string"
+                ? data.error
+                : "Request failed. Please try again.",
+        });
+      } else if (data.success) {
+        setResult({ message: data.message });
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          zip_of_interest: normalizeZip(initialZip),
+          message: "",
+        });
       } else {
-        setResult(data);
-        if (data.success) {
-          setFormData({ name: "", email: "", phone: "", zipCode: "", message: "" });
-        }
+        setResult({
+          error:
+            typeof data.message === "string"
+              ? data.message
+              : "Could not submit your request.",
+        });
       }
     } catch {
       setResult({ error: "Network error. Please try again." });
@@ -54,8 +100,16 @@ export default function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" id="contact" suppressHydrationWarning>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4" suppressHydrationWarning>
+    <form
+      onSubmit={handleSubmit}
+      className={`flex flex-col gap-4${className ? ` ${className}` : ""}`}
+      id={formId}
+      suppressHydrationWarning
+    >
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4"
+        suppressHydrationWarning
+      >
         <input
           type="text"
           name="name"
@@ -84,11 +138,11 @@ export default function ContactForm() {
         />
         <input
           type="text"
-          name="zipCode"
-          value={formData.zipCode}
+          name="zip_of_interest"
+          value={formData.zip_of_interest}
           onChange={(e) => {
             const val = e.target.value.replace(/\D/g, "").slice(0, 5);
-            setFormData({ ...formData, zipCode: val });
+            setFormData({ ...formData, zip_of_interest: val });
           }}
           placeholder="ZIP Code of Interest"
           inputMode="numeric"
@@ -106,11 +160,7 @@ export default function ContactForm() {
       />
 
       <Button type="submit" variant="primary" fullWidth disabled={loading}>
-        {loading ? (
-          <Loader2 className="size-5 animate-spin" />
-        ) : (
-          "SEND MESSAGE"
-        )}
+        {loading ? <Loader2 className="size-5 animate-spin" /> : "SEND MESSAGE"}
       </Button>
 
       {result && (

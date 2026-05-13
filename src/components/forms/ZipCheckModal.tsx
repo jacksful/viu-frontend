@@ -3,16 +3,19 @@
 import Button from "@/components/ui/Button";
 import {
   checkZipAvailability,
-  formatMonthlyPriceMain,
+  getZipPricingDisplay,
   submitLead,
   type ZipAvailabilityResponse,
   type ZipCodeDetails,
 } from "@/lib/zipAvailability";
 import { AlertCircle, CheckCircle, Loader2, Shield, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import ContactForm from "@/components/forms/ContactForm";
 
 type ModalStep =
   | "zip-search"
+  | "cannot_be_request"
   | "available"
   | "lead-form"
   | "success"
@@ -38,6 +41,7 @@ export default function ZipCheckModal({
   const [zipCode, setZipCode] = useState(initialZip);
   const [zipDetails, setZipDetails] = useState<ZipCodeDetails | null>(null);
   const [availabilityMessage, setAvailabilityMessage] = useState("");
+  const [isInCoverageArea, setIsInCoverageArea] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -58,7 +62,18 @@ export default function ZipCheckModal({
       setZipCode(code);
       setZipDetails(data.zipcode);
       setAvailabilityMessage(data.message);
-      setStep(data.available ? "available" : "unavailable");
+      setIsInCoverageArea(data.is_in_coverage_area);
+      let step_name: ModalStep = "zip-search";
+
+      if (data.is_in_coverage_area && !data.available) {
+        step_name = "cannot_be_request";
+      } else if (data.available) {
+        step_name = "available";
+      } else {
+        step_name = "unavailable";
+      }
+
+      setStep(step_name as ModalStep);
     },
     [],
   );
@@ -180,9 +195,7 @@ export default function ZipCheckModal({
       setStep("success");
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Network error. Please try again.",
+        err instanceof Error ? err.message : "Network error. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -191,8 +204,15 @@ export default function ZipCheckModal({
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+  // Portal to body so position:fixed is viewport-relative. Ancestors with
+  // backdrop-filter (e.g. the sticky nav) otherwise become the containing block
+  // and clip / mis-center the overlay.
+  if (typeof document === "undefined") return null;
+
+  const zipPricing = getZipPricingDisplay(zipDetails);
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex min-h-0 items-center justify-center overflow-y-auto p-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fadeIn"
@@ -270,9 +290,11 @@ export default function ZipCheckModal({
               </div>
               <div className="flex items-end justify-center gap-1 mb-1">
                 <span className="text-white text-[40px] sm:text-[48px] font-black leading-[1] tracking-[-2px]">
-                  ${formatMonthlyPriceMain(zipDetails?.monthly_price)}
+                  ${zipPricing.amount}
                 </span>
-                <span className="text-white/60 text-sm font-bold">/MO</span>
+                <span className="text-white/60 text-sm font-bold">
+                  {zipPricing.periodSuffix}
+                </span>
               </div>
               <span className="text-white/60 text-xs font-bold uppercase tracking-[1.2px]">
                 {zipDetails?.label ?? "Per ZIP Code"}
@@ -355,6 +377,44 @@ export default function ZipCheckModal({
           </div>
         )}
 
+        {/* STEP: In coverage but not claimable online — request via contact */}
+        {step === "cannot_be_request" && (
+          <div className="p-5 sm:p-8">
+            <div className="text-center mb-5 sm:mb-6">
+              <div className="size-14 sm:size-16 bg-[rgba(245,127,32,0.1)] rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="size-7 sm:size-8 text-[#f57f20]" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#2a2d7c] mb-2">
+                Request this territory
+              </h3>
+              <p className="text-[#6a7282] text-sm sm:text-base">
+                {availabilityMessage ||
+                  `ZIP ${zipCode} is in our area. Submit your details and our team will follow up.`}
+              </p>
+            </div>
+
+            <ContactForm
+              formId="zip-check-contact-request"
+              initialZip={zipCode}
+              className="pt-2"
+            />
+
+            <Button
+              type="button"
+              onClick={() => {
+                setStep("zip-search");
+                setZipCode("");
+                setError("");
+              }}
+              variant="primary"
+              fullWidth
+              className="mt-6"
+            >
+              TRY ANOTHER ZIP
+            </Button>
+          </div>
+        )}
+
         {/* STEP: Success */}
         {step === "success" && (
           <div className="p-5 sm:p-8 text-center">
@@ -384,11 +444,12 @@ export default function ZipCheckModal({
               <AlertCircle className="size-7 sm:size-8 text-amber-500" />
             </div>
             <h3 className="text-xl sm:text-2xl font-bold text-[#2a2d7c] mb-2">
-              ZIP TAKEN
+              {!isInCoverageArea
+                ? "Invalid ZIP Code"
+                : "ZIP Code Not in Coverage Area"}
             </h3>
             <p className="text-[#6a7282] text-sm sm:text-base mb-6">
-              {availabilityMessage ||
-                `ZIP code ${zipCode} is currently owned by another agent. Try a different ZIP code.`}
+              {availabilityMessage}
             </p>
             <Button
               onClick={() => {
@@ -403,6 +464,7 @@ export default function ZipCheckModal({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

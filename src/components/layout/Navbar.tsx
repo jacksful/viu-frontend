@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import ZipCheckModal from "@/components/forms/ZipCheckModal";
 import Button from "@/components/ui/Button";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const navLinks = [
   { label: "The Advantage", href: "#advantage" },
@@ -14,6 +15,7 @@ const navLinks = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [zipModalOpen, setZipModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -35,7 +37,7 @@ export default function Navbar() {
           <Image
             src="/images/logo-white.svg"
             alt="VIU"
-            width={120}
+            width={80}
             height={44}
             className="h-[36px] md:h-[44px] w-auto object-contain"
             priority
@@ -57,7 +59,11 @@ export default function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden lg:block">
-          <Button variant="primary" size="sm" href="#pricing">
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => setZipModalOpen(true)}
+          >
             Check Territory
           </Button>
         </div>
@@ -107,13 +113,20 @@ export default function Navbar() {
             variant="primary"
             size="sm"
             fullWidth
-            href="#pricing"
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              setIsOpen(false);
+              setZipModalOpen(true);
+            }}
           >
             Check Territory
           </Button>
         </nav>
       </div>
+
+      <ZipCheckModal
+        isOpen={zipModalOpen}
+        onClose={() => setZipModalOpen(false)}
+      />
     </header>
   );
 }

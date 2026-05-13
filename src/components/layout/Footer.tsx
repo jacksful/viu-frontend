@@ -1,6 +1,13 @@
-import Image from "next/image";
 import Button from "@/components/ui/Button";
-import { MapPin, Mail, Shield, Globe, MessageCircle, Users } from "lucide-react";
+import {
+  Globe,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Shield,
+  Users,
+} from "lucide-react";
+import Image from "next/image";
 
 const socialLinks = [
   { icon: Globe, href: "#", label: "LinkedIn" },
@@ -26,9 +33,9 @@ export default function Footer() {
             <Image
               src="/images/logo-white.svg"
               alt="VIU"
-              width={125}
+              width={80}
               height={44}
-              className="h-[44px] w-auto object-contain"
+              className="h-[44px] object-contain"
             />
             <p className="text-[#868c96] text-lg leading-[26px] tracking-[-0.44px]">
               Predictive brand positioning for elite real estate professionals.
@@ -69,10 +76,7 @@ export default function Footer() {
           </p>
           <div className="flex flex-wrap gap-4 md:gap-8">
             {footerInfo.map((info) => (
-              <div
-                key={info.text}
-                className="flex items-center gap-2"
-              >
+              <div key={info.text} className="flex items-center gap-2">
                 <info.icon className="size-4 text-[#868c96]" />
                 <span className="text-[#868c96] text-sm font-medium tracking-[-0.15px]">
                   {info.text}
