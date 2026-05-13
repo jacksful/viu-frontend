@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 /** Proxies Laravel `GET /api/cms` JSON for tooling and same-origin fetch. Page SSR uses `getHomeSections()` with `CMS_API_URL` directly. */
 export async function GET() {
-  const url = process.env.CMS_API_URL?.trim();
+  const url = process.env.NEXT_PUBLIC_ZIP_API_BASE_URL?.trim() + "/cms";
   if (!url) {
     const body: CmsResponse = {
       version: "static-fallback",
