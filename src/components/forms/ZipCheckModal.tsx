@@ -399,7 +399,7 @@ export default function ZipCheckModal({
               className="pt-2"
             />
 
-            <Button
+            {/* <Button
               type="button"
               onClick={() => {
                 setStep("zip-search");
@@ -411,7 +411,7 @@ export default function ZipCheckModal({
               className="mt-6"
             >
               TRY ANOTHER ZIP
-            </Button>
+            </Button> */}
           </div>
         )}
 
